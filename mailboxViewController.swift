@@ -16,7 +16,7 @@ class mailboxViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-          scrollView.contentSize = CGSize(width: 375, height: 1400)
+          mailScrollView.contentSize = CGSize(width: 375, height: 1400)
         
         // Do any additional setup after loading the view.
     }
