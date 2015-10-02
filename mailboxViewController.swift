@@ -20,15 +20,16 @@ class mailboxViewController: UIViewController {
     
     @IBOutlet weak var rescheduleImageView: UIImageView!
     
+    @IBOutlet weak var listImageView: UIImageView!
+    
+    @IBOutlet weak var listiconImageView: UIImageView!
+    
     var initialMsgCenter: CGPoint!
     var msgOriginalCenter: CGPoint!
     
     var initialLaterCenter: CGPoint!
     var laterOriginalCenter: CGPoint!
     
-    
-    
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,6 +63,7 @@ class mailboxViewController: UIViewController {
             // move the message and show that we tracked it
             singleMessageUIView.center = CGPoint(x: msgOriginalCenter.x + translation.x, y: msgOriginalCenter.y)
             print("Gesture changed at: \(point)")
+            print("Message Center is \(singleMessageUIView)")
 
             // check to see if message is between 0 and 60 pixels
             if (singleMessageUIView.center.x < initialMsgCenter.x) && (singleMessageUIView.center.x > initialMsgCenter.x - 60){
@@ -85,6 +87,17 @@ class mailboxViewController: UIViewController {
                 self.laterUIImageView.center.x = laterOriginalCenter.x + translation.x + 60
 
             }
+                // check to see if message is being dragged to the left more than 260 pixels
+            else if (singleMessageUIView.center.x < initialMsgCenter.x - 261){
+                UIView.animateWithDuration(0.3, animations:{
+                    self.containerMessageView.backgroundColor = .brownColor()
+                    self.listiconImageView.alpha = 1
+                    self.laterUIImageView.alpha = 0
+                    self.listiconImageView.center.x = self.laterOriginalCenter.x + translation.x + 60
+                })
+
+                
+            }
 
             
         } else if panGestureRecognizer.state == UIGestureRecognizerState.Ended {
@@ -96,16 +109,26 @@ class mailboxViewController: UIViewController {
                     self.singleMessageUIView.center.x = self.initialMsgCenter.x
                     self.containerMessageView.backgroundColor = .grayColor()
                     self.laterUIImageView.alpha = 0.25
-                    print("Gesture ended at: \(point)")
+                    // print("SHOW SNAPBACK: \(self.singleMessageUIView.center)")
                 })
             }
-                // check to see if between 61 and 260 pixels
-                else if (singleMessageUIView.center.x < initialMsgCenter.x - 61) && (singleMessageUIView.center.x > initialMsgCenter.x - 260){
-                    UIView.animateWithDuration(0.5, animations:{
-                        self.rescheduleImageView.alpha = 1
-                    })
+                // check to see ended between 61 and 260 pixels
+            else if (singleMessageUIView.center.x < initialMsgCenter.x - 61) && (singleMessageUIView.center.x > initialMsgCenter.x - 260){
+                //show reschedule image
+                //print("SHOW RESCHED: \(self.singleMessageUIView.center)")
+                UIView.animateWithDuration(0.5, animations:{
+                    self.rescheduleImageView.alpha = 1
+                })
+                // check to see ended more than 260 pixels
             }
-        }
+            else if (singleMessageUIView.center.x < initialMsgCenter.x - 261) {
+                //show list image
+                //print("SHOW LIST: \(self.singleMessageUIView.center)")
+                UIView.animateWithDuration(0.5, animations:{
+                    self.listImageView.alpha = 1
+                    })
+                }
+            }
     
     
 
