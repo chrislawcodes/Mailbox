@@ -66,13 +66,13 @@
                                         <rect key="frame" x="0.0" y="82" width="375" height="95"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
-                                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" image="archive_icon" id="ZEv-Ey-WcG">
-                                                <rect key="frame" x="8" y="39" width="25" height="25"/>
+                                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" image="later_icon" id="h1H-O6-iwY">
+                                                <rect key="frame" x="332" y="37" width="35" height="35"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <animations/>
                                             </imageView>
-                                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" image="later_icon" id="h1H-O6-iwY">
-                                                <rect key="frame" x="342" y="39" width="25" height="25"/>
+                                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" image="archive_icon" id="ZEv-Ey-WcG">
+                                                <rect key="frame" x="8" y="34" width="35" height="35"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <animations/>
                                             </imageView>
@@ -92,6 +92,11 @@
                                 </subviews>
                                 <animations/>
                             </scrollView>
+                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" alpha="0.0" contentMode="scaleToFill" image="reschedule" id="x7D-r0-13d">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="670"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <animations/>
+                            </imageView>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -99,7 +104,10 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="375" height="1470"/>
                     <connections>
+                        <outlet property="containerMessageView" destination="CZw-c8-Soy" id="X2Q-xM-KUG"/>
+                        <outlet property="laterUIImageView" destination="h1H-O6-iwY" id="n5I-nK-Bkj"/>
                         <outlet property="mailScrollView" destination="BEA-gB-PDY" id="fCr-YX-rrP"/>
+                        <outlet property="rescheduleImageView" destination="x7D-r0-13d" id="XSy-eu-YLL"/>
                         <outlet property="singleMessageUIView" destination="cfk-Vb-iVp" id="Tr2-iN-gZD"/>
                     </connections>
                 </viewController>
@@ -119,6 +127,7 @@
         <image name="mail_nav_icon" width="25" height="20"/>
         <image name="message" width="320" height="86"/>
         <image name="nav" width="320" height="65"/>
+        <image name="reschedule" width="320" height="568"/>
         <image name="search" width="320" height="42"/>
     </resources>
 </document>
