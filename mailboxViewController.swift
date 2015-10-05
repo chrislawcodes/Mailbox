@@ -14,9 +14,7 @@ class mailboxViewController: UIViewController {
 
     @IBOutlet weak var singleMessageUIView: UIImageView!
     
-    @IBOutlet weak var laterUIImageView: UIImageView!
-    
-    @IBOutlet weak var containerMessageView: UIView!
+    @IBOutlet weak var latericonUIImageView: UIImageView!
     
     @IBOutlet weak var rescheduleImageView: UIImageView!
     
@@ -24,25 +22,62 @@ class mailboxViewController: UIViewController {
     
     @IBOutlet weak var listiconImageView: UIImageView!
     
+    @IBOutlet weak var archiveiconImageView: UIImageView!
+    
+    @IBOutlet weak var mailfeedImageView: UIImageView!
+    
+    @IBOutlet weak var msgcontainerVIew: UIView!
+    
+    @IBOutlet weak var deleteiconImageView: UIImageView!
+    
     var initialMsgCenter: CGPoint!
     var msgOriginalCenter: CGPoint!
+
+    var initialcontainerCenter: CGPoint!
+    var initialmailfeedCenter: CGPoint!
     
     var initialLaterCenter: CGPoint!
     var laterOriginalCenter: CGPoint!
     
+
+    var initialarchiveCenter: CGPoint!
+    var archiveOriginalCenter: CGPoint!
+
+    var initiallistCenter: CGPoint!
+    
+    var initialdeleteCenter: CGPoint!
+    var deleteOriginalCenter: CGPoint!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-          mailScrollView.contentSize = CGSize(width: 375, height: 1400)
-        var panGestureRecognizer = UIPanGestureRecognizer(target: self, action: "onCustomPan:")
-          singleMessageUIView.addGestureRecognizer(panGestureRecognizer)
-
-        initialMsgCenter = singleMessageUIView.center
-        initialLaterCenter = laterUIImageView.center
-        laterUIImageView.alpha = 0.25
-
+        mailScrollView.contentSize = CGSize(width: 375, height: 1400)
         
-        // Do any additional setup after loading the view.
+        //setup the pan gesture recognizer
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: "onCustomPan:")
+        singleMessageUIView.addGestureRecognizer(panGestureRecognizer)
+
+        //setup the list tap gesture recognizer
+        let listtapGestureRecognizer = UITapGestureRecognizer(target: self, action: "onListTap:")
+        listtapGestureRecognizer.numberOfTapsRequired = 1;
+        listImageView.userInteractionEnabled = true
+        listImageView.addGestureRecognizer(listtapGestureRecognizer)
+
+        //setup the reschedule tap gesture recognizer
+        let reschedtapGestureRecognizer = UITapGestureRecognizer(target: self, action: "onReschedTap:")
+        reschedtapGestureRecognizer.numberOfTapsRequired = 1;
+        rescheduleImageView.userInteractionEnabled = true
+        rescheduleImageView.addGestureRecognizer(reschedtapGestureRecognizer)
+        
+        //set initial values for msg and later icon
+        initialMsgCenter = singleMessageUIView.center
+        initialLaterCenter = latericonUIImageView.center
+        initialcontainerCenter = msgcontainerVIew.center
+        initialmailfeedCenter = mailfeedImageView.center
+        initiallistCenter = listiconImageView.center
+        initialarchiveCenter = archiveiconImageView.center
+        initialdeleteCenter = deleteiconImageView.center
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -56,49 +91,77 @@ class mailboxViewController: UIViewController {
         var translation = panGestureRecognizer.translationInView(view)
         
         if panGestureRecognizer.state == UIGestureRecognizerState.Began {
+            iconlocationReset()
             msgOriginalCenter = singleMessageUIView.center
-            laterOriginalCenter = laterUIImageView.center
-            print("Gesture began at: \(point)")
+            laterOriginalCenter = latericonUIImageView.center
+            archiveOriginalCenter = archiveiconImageView.center
+            deleteOriginalCenter = deleteiconImageView.center
+            
+            if velocity.x < 0 {
+                latericonUIImageView.alpha = 0.25
+            }
+            
+            if velocity.x > 0 {
+                archiveiconImageView.alpha = 0.25
+            }
+            
         } else if panGestureRecognizer.state == UIGestureRecognizerState.Changed {
             // move the message and show that we tracked it
             singleMessageUIView.center = CGPoint(x: msgOriginalCenter.x + translation.x, y: msgOriginalCenter.y)
-            print("Gesture changed at: \(point)")
-            print("Message Center is \(singleMessageUIView)")
 
-            // check to see if message is between 0 and 60 pixels
+            // check to see if message is between 0 and 60 pixels to the left
             if (singleMessageUIView.center.x < initialMsgCenter.x) && (singleMessageUIView.center.x > initialMsgCenter.x - 60){
-                // make icon opaque
                 UIView.animateWithDuration(0.5, animations:{
-                    self.laterUIImageView.alpha = 1
-
-                    })
-                
-                print("I'm in between 0 and 60")
-                
+                        self.latericonUIImageView.alpha = 1
+                })
             }
 
                 // check to see if message is being dragged to the left between 60 and 260 pixels
             else if (singleMessageUIView.center.x < initialMsgCenter.x - 61) && (singleMessageUIView.center.x > initialMsgCenter.x - 260){
-                // move icon with the view & make background Yellow
-                print("I'm between 61 and 260")
+
                 UIView.animateWithDuration(0.5, animations:{
-                self.containerMessageView.backgroundColor = .yellowColor()
+                self.msgcontainerVIew.backgroundColor = .yellowColor()
                 })
-                self.laterUIImageView.center.x = laterOriginalCenter.x + translation.x + 60
+                self.latericonUIImageView.center.x = laterOriginalCenter.x + translation.x + 60
 
             }
                 // check to see if message is being dragged to the left more than 260 pixels
             else if (singleMessageUIView.center.x < initialMsgCenter.x - 261){
                 UIView.animateWithDuration(0.3, animations:{
-                    self.containerMessageView.backgroundColor = .brownColor()
-                    self.listiconImageView.alpha = 1
-                    self.laterUIImageView.alpha = 0
-                    self.listiconImageView.center.x = self.laterOriginalCenter.x + translation.x + 60
+                    self.msgcontainerVIew.backgroundColor = .brownColor()
                 })
+                self.listiconImageView.alpha = 1
+                self.latericonUIImageView.alpha = 0
+                self.listiconImageView.center.x = self.laterOriginalCenter.x + translation.x + 60
 
+            }
+            else if (singleMessageUIView.center.x > initialMsgCenter.x) && (singleMessageUIView.center.x < initialMsgCenter.x + 60){
+                UIView.animateWithDuration(0.5, animations:{
+                    self.archiveiconImageView.alpha = 1
+                })
+            }
+            
+                // check to see if message is being dragged to the right between 60 and 260 pixels
+            else if (singleMessageUIView.center.x > initialMsgCenter.x + 61) && (singleMessageUIView.center.x < initialMsgCenter.x + 260){
+                
+                UIView.animateWithDuration(0.5, animations:{
+                    self.msgcontainerVIew.backgroundColor = .greenColor()
+                })
+                self.archiveiconImageView.center.x = archiveOriginalCenter.x + translation.x - 60
                 
             }
+                // check to see if message is being dragged to the right more than 260 pixels
+            else if (singleMessageUIView.center.x > initialMsgCenter.x + 261){
+                UIView.animateWithDuration(0.3, animations:{
+                    self.msgcontainerVIew.backgroundColor = .redColor()
+                    
+                })
+                  self.archiveiconImageView.alpha = 0
+                self.deleteiconImageView.center.x = self.archiveOriginalCenter.x + translation.x - 60
+                self.deleteiconImageView.alpha = 1
+            }
 
+            
             
         } else if panGestureRecognizer.state == UIGestureRecognizerState.Ended {
             // check to see if message was moved left or right more than 60 pixels
@@ -107,31 +170,100 @@ class mailboxViewController: UIViewController {
                 //snap the message back
                 UIView.animateWithDuration(0.4, animations: {
                     self.singleMessageUIView.center.x = self.initialMsgCenter.x
-                    self.containerMessageView.backgroundColor = .grayColor()
-                    self.laterUIImageView.alpha = 0.25
-                    // print("SHOW SNAPBACK: \(self.singleMessageUIView.center)")
+                    self.msgcontainerVIew.backgroundColor = .grayColor()
                 })
             }
-                // check to see ended between 61 and 260 pixels
+                // check to see ended between 61 and 260 pixels to the left
             else if (singleMessageUIView.center.x < initialMsgCenter.x - 61) && (singleMessageUIView.center.x > initialMsgCenter.x - 260){
                 //show reschedule image
-                //print("SHOW RESCHED: \(self.singleMessageUIView.center)")
                 UIView.animateWithDuration(0.5, animations:{
                     self.rescheduleImageView.alpha = 1
                 })
-                // check to see ended more than 260 pixels
+                // check to see ended more than 260 pixels to the left
             }
             else if (singleMessageUIView.center.x < initialMsgCenter.x - 261) {
                 //show list image
-                //print("SHOW LIST: \(self.singleMessageUIView.center)")
                 UIView.animateWithDuration(0.5, animations:{
                     self.listImageView.alpha = 1
                     })
                 }
+    
+        
+            else if (singleMessageUIView.center.x > initialMsgCenter.x + 61){
+            //complete the animation to the right
+                    swiperightReset()
             }
+            // check to see ended more than 260 pixels to the left
+            }
+    }
     
+    func onListTap(listtapGestureRecognizer: UITapGestureRecognizer) {
+       swipeleftReset()
+    }
     
+    func onReschedTap(reschedtapGestureRecognizer: UITapGestureRecognizer) {
+        swipeleftReset()
+    }
+    
+    func swipeleftReset (){
+        //  set the icons and the lists to hide
+        self.archiveiconImageView.alpha = 0
+        self.listiconImageView.alpha = 0
+        self.latericonUIImageView.alpha = 0
+        self.rescheduleImageView.alpha = 0
+        self.listImageView.alpha = 0
+        self.deleteiconImageView.alpha = 0
+        
+        // move the message all the way left
+        UIView.animateWithDuration(0.4, animations: {
+            self.singleMessageUIView.center.x = self.initialMsgCenter.x - 375
+        })
+        
+       movefeedup()
+    }
+    
+    func swiperightReset (){
+        //  set the icons and the lists to hide
+        self.archiveiconImageView.alpha = 0
+        self.listiconImageView.alpha = 0
+        self.latericonUIImageView.alpha = 0
+        self.rescheduleImageView.alpha = 0
+        self.listImageView.alpha = 0
+        self.deleteiconImageView.alpha = 0
+        
+        // move the message all the way left
+        UIView.animateWithDuration(0.4, animations: {
+            self.singleMessageUIView.center.x = self.initialMsgCenter.x + 375
+        })
+        movefeedup()
+    }
+    
+    func movefeedup (){
+    
+        // hide the container and then move the mailfeed up
+        UIView.animateWithDuration(0.4, animations: {
+            self.msgcontainerVIew.alpha = 0
+            self.mailfeedImageView.center.y = self.initialmailfeedCenter.y - 90
+        })
+        
+        delay (1){
+            // move container into correct position and then move the feed back down
+            self.singleMessageUIView.center = self.initialMsgCenter
+            self.msgcontainerVIew.alpha = 1
+            self.mailfeedImageView.center.y = self.initialmailfeedCenter.y
+        }
+        
+    }
+    
+    func iconlocationReset (){
+        latericonUIImageView.center = initialLaterCenter
+        listiconImageView.center = initiallistCenter
+        archiveiconImageView.center = initialarchiveCenter
 
+        self.latericonUIImageView.alpha = 0
+        self.archiveiconImageView.alpha = 0
+        self.msgcontainerVIew.backgroundColor = .grayColor()
+    }
 
 
     /*
@@ -144,4 +276,4 @@ class mailboxViewController: UIViewController {
     }
     */
     }
-}
+
