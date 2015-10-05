@@ -289,7 +289,7 @@ class mailboxViewController: UIViewController {
         self.listImageView.alpha = 0
         self.deleteiconImageView.alpha = 0
         
-        // move the message all the way left
+        // move the message all the way right
         UIView.animateWithDuration(0.4, animations: {
             self.singleMessageUIView.center.x = self.initialMsgCenter.x + 375
         })
