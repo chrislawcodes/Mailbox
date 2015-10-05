@@ -10,6 +10,8 @@ import UIKit
 
 class mailboxViewController: UIViewController {
 
+    @IBOutlet weak var primaryMailView: UIView!
+    
     @IBOutlet weak var mailScrollView: UIScrollView!
 
     @IBOutlet weak var singleMessageUIView: UIImageView!
@@ -30,6 +32,8 @@ class mailboxViewController: UIViewController {
     
     @IBOutlet weak var deleteiconImageView: UIImageView!
     
+    @IBOutlet weak var menuImageView: UIImageView!
+    
     var initialMsgCenter: CGPoint!
     var msgOriginalCenter: CGPoint!
 
@@ -48,10 +52,17 @@ class mailboxViewController: UIViewController {
     var initialdeleteCenter: CGPoint!
     var deleteOriginalCenter: CGPoint!
     
+    var menuOriginalCenter:CGPoint!
+
+    var initialprimarymailCenter: CGPoint!
+    var primarymailOriginalCenter:CGPoint!
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         mailScrollView.contentSize = CGSize(width: 375, height: 1400)
+        menuImageView.alpha = 1
         
         //setup the pan gesture recognizer
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: "onCustomPan:")
@@ -69,6 +80,12 @@ class mailboxViewController: UIViewController {
         rescheduleImageView.userInteractionEnabled = true
         rescheduleImageView.addGestureRecognizer(reschedtapGestureRecognizer)
         
+        //setup the menu tap gesture recognizer
+        let menutapGestureRecognizer = UITapGestureRecognizer(target: self, action: "onMenuTap:")
+        menutapGestureRecognizer.numberOfTapsRequired = 1;
+        menuImageView.userInteractionEnabled = true
+        menuImageView.addGestureRecognizer(menutapGestureRecognizer)
+        
         //set initial values for msg and later icon
         initialMsgCenter = singleMessageUIView.center
         initialLaterCenter = latericonUIImageView.center
@@ -77,6 +94,12 @@ class mailboxViewController: UIViewController {
         initiallistCenter = listiconImageView.center
         initialarchiveCenter = archiveiconImageView.center
         initialdeleteCenter = deleteiconImageView.center
+        initialprimarymailCenter = primaryMailView.center
+        
+        //Add Screen Edge Gesture Recgonizer
+        var edgeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: "onEdgePan:")
+        edgeGesture.edges = UIRectEdge.Left
+        primaryMailView.addGestureRecognizer(edgeGesture)
 
     }
 
@@ -85,10 +108,38 @@ class mailboxViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    func onEdgePan(panGestureRecognizer: UIPanGestureRecognizer) {
+        print("Panning the edge!")
+        let point = panGestureRecognizer.locationInView(view)
+        let velocity = panGestureRecognizer.velocityInView(view)
+        let translation = panGestureRecognizer.translationInView(view)
+        
+        if panGestureRecognizer.state == UIGestureRecognizerState.Began {
+            primarymailOriginalCenter = primaryMailView.center
+        }
+        else if panGestureRecognizer.state == UIGestureRecognizerState.Changed{
+            primaryMailView.center.x = primarymailOriginalCenter.x + translation.x
+        
+        }
+        else if panGestureRecognizer.state == UIGestureRecognizerState.Ended {
+            if velocity.x > 0 {
+                 UIView.animateWithDuration(0.5, animations:{
+                    self.primaryMailView.center.x = self.initialprimarymailCenter.x + 375
+                 })
+            }
+                else if velocity.x < 0 {
+                UIView.animateWithDuration(0.5, animations:{
+                    self.primaryMailView.center.x = self.initialprimarymailCenter.x
+                })
+            }
+            
+        }
+    }
+    
     func onCustomPan(panGestureRecognizer: UIPanGestureRecognizer) {
-        var point = panGestureRecognizer.locationInView(view)
-        var velocity = panGestureRecognizer.velocityInView(view)
-        var translation = panGestureRecognizer.translationInView(view)
+        let point = panGestureRecognizer.locationInView(view)
+        let velocity = panGestureRecognizer.velocityInView(view)
+        let translation = panGestureRecognizer.translationInView(view)
         
         if panGestureRecognizer.state == UIGestureRecognizerState.Began {
             iconlocationReset()
@@ -195,6 +246,13 @@ class mailboxViewController: UIViewController {
             }
             // check to see ended more than 260 pixels to the left
             }
+    }
+    
+    func onMenuTap(menutapGestureRecognizer: UITapGestureRecognizer){
+        print("tapped on menu")
+        UIView.animateWithDuration(0.5, animations:{
+            self.primaryMailView.center.x = self.initialprimarymailCenter.x
+        })
     }
     
     func onListTap(listtapGestureRecognizer: UITapGestureRecognizer) {
