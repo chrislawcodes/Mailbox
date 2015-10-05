@@ -238,7 +238,6 @@ class mailboxViewController: UIViewController {
                     self.listImageView.alpha = 1
                     })
                 }
-    
         
             else if (singleMessageUIView.center.x > initialMsgCenter.x + 61){
             //complete the animation to the right
@@ -277,7 +276,9 @@ class mailboxViewController: UIViewController {
             self.singleMessageUIView.center.x = self.initialMsgCenter.x - 375
         })
         
-       movefeedup()
+        delay(0.3){
+            self.movefeedup()
+        }
     }
     
     func swiperightReset (){
@@ -293,7 +294,11 @@ class mailboxViewController: UIViewController {
         UIView.animateWithDuration(0.4, animations: {
             self.singleMessageUIView.center.x = self.initialMsgCenter.x + 375
         })
-        movefeedup()
+        
+        delay(0.3){
+            self.movefeedup()
+        }
+
     }
     
     func movefeedup (){
